@@ -1,5 +1,6 @@
 // tests/program/multi_gpu_plan_test.cpp - what the cards do together, over fake card tables: the prices, the pick, the
 // single-card cases (no choice, no other card touched).
+#include "basalt/cuda_target.hpp"
 #include "basalt/program/gpu_select.hpp"
 #include "basalt/program/multi_gpu_plan.hpp"
 
@@ -25,8 +26,8 @@ static GpuCard card(int smi, const char* name, double gbps, uint64_t gib) {
     c.token = std::to_string(smi);
     c.smi = smi;
     c.name = name;
-    c.cc_major = 8;
-    c.cc_minor = 9;
+    c.cc_major = basalt::cuda_target::major;
+    c.cc_minor = basalt::cuda_target::minor;
     c.mem_gbps = gbps;
     c.vram = gib * GiB;
     return c;

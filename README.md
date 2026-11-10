@@ -24,7 +24,7 @@ A large MoE model runs on one workstation, behind an OpenAI- and Anthropic-compa
 ## Requirements
 
 - Linux x86-64 with AVX2 (AVX-512 is used when present), or Windows 10 1903+ x64 ([platforms](docs/platforms.md)).
-- An NVIDIA Ada Lovelace GPU (compute capability 8.9) with CUDA 13.
+- An NVIDIA Ada Lovelace GPU (compute capability 8.9), or an Ampere GA10x GPU (8.6, e.g. RTX 3090) with an sm_86 build, and CUDA 13.
 - CMake 3.24 or newer, GCC 13 or newer (Linux), Python 3.10 or newer, and enough system RAM for the experts that do not fit in VRAM.
 
 ## Quick start
@@ -37,8 +37,11 @@ pip install -r requirements.txt
 hf download jesdga/Qwen3.8-Flash-Next-Basalt Qwen3.8-FN-GSQ-RCO-IQ3_S.basalt --local-dir models
 ```
 
-The build targets sm_89 only; `-DCMAKE_CUDA_ARCHITECTURES` with anything else is
-refused. The toolchain and test invocations used for the results below are in
+The build targets sm_89 by default. `-DCMAKE_CUDA_ARCHITECTURES=86` builds for Ampere
+GA10x (RTX 30-series) instead; one architecture per build, anything else is refused.
+On sm_86, `prefill_hc_up_mix_test` reports a bitwise difference at width 129 that
+comes from cuBLAS's two-step reference, not the fused kernel (which matches the CPU
+double reference to ~4e-7). The toolchain and test invocations used for the results below are in
 [Ada execution and validation](docs/precision/ada.md).
 
 The binary and file-format names stay `basalt` and `.basalt`: the packs are the
